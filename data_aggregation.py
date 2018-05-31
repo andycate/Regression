@@ -3,7 +3,18 @@ import struct
 
 def load_data():
     training_images = open("train-images-idx3-ubyte", "rb")
+    training_labels_raw = open("train-labels-idx1-ubyte", "rb")
+    test_images_raw = open("t10k-images-idx3-ubyte", "rb")
+    test_labels_raw = open("t10k-labels-idx1-ubyte", "rb")
 
+    # create numpy arrays with the correct data
+    training_images = process_training_images(training_images_raw)
+    training_labels = process_training_labels(training_labels_raw)
+    test_images = process_test_images(test_images_raw)
+    test_labels = process_test_labels(test_labels_raw)
+
+    # append 
+`   `
 
     try:
         magic_num = struct.unpack(">L", training_images.read(4))[0]
@@ -34,5 +45,3 @@ def load_data():
             print("")
     finally:
         training_images.close()
-
-load_data()

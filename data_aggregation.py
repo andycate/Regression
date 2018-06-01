@@ -3,9 +3,25 @@ import struct
 
 def format_images(data_file):
     # read data into numpy array
-    # reshape array
-    # change data type to float32
-    # append ones for intercept term
+    images = np.array([])
+    try:
+        magic_num = struct.unpack(">L", data_file.read(4))[0]
+        num_images = struct.unpack(">L", data_file.read(4))[0]
+        rows = struct.unpack(">L", data_file.read(4))[0] # per image
+        cols = struct.unpack(">L", data_file.read(4))[0] # per image
+
+        img_buffer = data_file.read(num_images * rows * cols) # reads all the data for all the images
+        dt = np.dtype(np.uint8).newbyteorder('>')
+        img_array = np.frombuffer(img_buffer, dtype=dt, count=-1, offset=0)
+        # reshape array
+        img_array = np.reshape(img_array, (num_images, rows * cols)).transpose()
+        # change data type to float32
+        img_array = img_array.astype(dtype=np.float32, casting='safe')
+        # append ones for intercept term
+        img_array = np.append(img_array, np.ones((1, num_images)), axis=0)
+        images = img_array
+    finally:
+        return images
 
 def format_labels(data_file):
     # read data into array
@@ -24,44 +40,15 @@ def load_training_data():
     training_images = format_images(training_images_raw)
     training_labels = format_labels(training_labels_raw)
 
+    # close input streams
+    training_images_raw.close()
+    training_labels_raw.close()
+
     # process the data, and prepare it for training
     training_images, training_labels = process_data(training_images, training_labels)
 
     # return the processed data
     return training_images, training_labels
-
-    # append 
-    training_images = np.append(training_images, np.ones((1, num_images)), axis=0)
-
-    try:
-        magic_num = struct.unpack(">L", training_images.read(4))[0]
-        num_images = struct.unpack(">L", training_images.read(4))[0]
-        rows = struct.unpack(">L", training_images.read(4))[0] # per image
-        cols = struct.unpack(">L", training_images.read(4))[0] # per image
-        print("Total number of training images: " + str(num_images))
-        print("Rows per image: " + str(rows))
-        print("Columns per image: " + str(cols))
-
-        img_buffer = training_images.read(num_images * rows * cols) # reads all the data for all the images
-        print("Bytes in the image byte buffer: " + str(len(img_buffer)))
-        dt = np.dtype(np.uint8)
-        dt = dt.newbyteorder('>')
-        img_array = np.frombuffer(img_buffer, dtype=dt, count=-1, offset=0)
-        print("Raw array size: " + str(img_array.size))
-
-        img_array = np.reshape(img_array, (num_images, rows * cols))
-        print("Shape of new ndarray: " + str(img_array.shape))
-        print(img_array)
-
-        img_array = img_array.transpose()
-        print("Shape of transposed ndarray: " + str(img_array.shape))
-
-        for y in range(28):
-            for x in range(28):
-                print(str(len(str(img_array[28 * y + x][1])) - 1) + " ", end="", flush=True)
-            print("")
-    finally:
-        training_images.close()
 
 def load_test_data():
     # open the raw data files
@@ -71,6 +58,10 @@ def load_test_data():
     # create numpy arrays with the correct (raw) data
     test_images = format_images(test_images_raw)
     test_labels = format_labels(test_labels_raw)
+
+    # close input streams
+    test_images_raw.close()
+    test_labels_raw.close()
 
     # process the data, and prepare it for training
     test_images, test_labels = process_data(test_images, test_labels)

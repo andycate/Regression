@@ -17,19 +17,33 @@ def format_images(data_file):
         img_array = np.reshape(img_array, (num_images, rows * cols)).transpose()
         # change data type to float32
         img_array = img_array.astype(dtype=np.float32, casting='safe')
-        # append ones for intercept term
-        img_array = np.append(img_array, np.ones((1, num_images)), axis=0)
         images = img_array
     finally:
         return images
 
 def format_labels(data_file):
-    # read data into array
-    # change data type to float32
+    magic_num = struct.unpack(">L", data_file.read(4))[0]
+    num_labels = struct.unpack(">L", data_file.read(4))[0]
+    try:
+        # read data into array
+        lbl_buffer = data_file.read(num_labels) # reads all the data for all the images
+        dt = np.dtype(np.uint8).newbyteorder('>')
+        lbl_array = np.frombuffer(lbl_buffer, dtype=dt, count=-1, offset=0)
+        # change data type to float32
+        lbl_array = lbl_array.astype(dtype=np.float32, casting='safe')
+    finally:
+        return lbl_array
 
 def process_data(imgs, lbls):
     # select all ones and all zeros
+    index = np.sort(np.append(np.where(lbls==0)[0], np.where(lbls==1)[0]))
+    labels = np.take(lbls, index)
+    images = np.take(imgs, index, axis=-1)
     # append ones to image data for intercept term
+    images = np.append(images, np.ones((1, images.shape[1])), axis=0)
+    return images, labels
+
+def display_image
 
 def load_training_data():
     # open the raw data files

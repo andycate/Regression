@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import struct
 
 def format_images(data_file):
@@ -39,11 +40,20 @@ def process_data(imgs, lbls):
     index = np.sort(np.append(np.where(lbls==0)[0], np.where(lbls==1)[0]))
     labels = np.take(lbls, index)
     images = np.take(imgs, index, axis=-1)
+    # normalize data(devide by 255.0)
+    images = images / 255.0
     # append ones to image data for intercept term
     images = np.append(images, np.ones((1, images.shape[1])), axis=0)
     return images, labels
 
-def display_image
+def display_image(imgs, index):
+    disp = ['.', ',', ';', 'x']
+    image = imgs[:784, index-1:index].reshape(784)
+    for y in range(28):
+        for x in range(28):
+            symbol = disp[min(math.floor(image[y*28 + x]*(len(disp))), 3)]
+            print(symbol+symbol, end="")
+        print("", end="\n")
 
 def load_training_data():
     # open the raw data files

@@ -57,8 +57,8 @@ def display_image(imgs, index):
 
 def load_training_data():
     # open the raw data files
-    training_images_raw = open("train-images-idx3-ubyte", "rb")
-    training_labels_raw = open("train-labels-idx1-ubyte", "rb")
+    training_images_raw = open("data/train-images-idx3-ubyte", "rb")
+    training_labels_raw = open("data/train-labels-idx1-ubyte", "rb")
 
     # create numpy arrays with the correct (raw) data
     training_images = format_images(training_images_raw)
@@ -76,8 +76,8 @@ def load_training_data():
 
 def load_test_data():
     # open the raw data files
-    test_images_raw = open("t10k-images-idx3-ubyte", "rb")
-    test_labels_raw = open("t10k-labels-idx1-ubyte", "rb")
+    test_images_raw = open("data/t10k-images-idx3-ubyte", "rb")
+    test_labels_raw = open("data/t10k-labels-idx1-ubyte", "rb")
 
     # create numpy arrays with the correct (raw) data
     test_images = format_images(test_images_raw)

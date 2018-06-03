@@ -40,6 +40,12 @@ def normalize_images(imgs):
     std = np.std(imgs)
     return (imgs - mean) / std
 
+def randomize_data(imgs, lbls):
+    assert imgs.shape[1] == lbls.shape[0]
+    permutation = np.random.permutation(imgs.shape[1])
+    shuffled_imgs = np.take(imgs, permutation, axis=-1)
+    shuffled_lbls = np.take(lbls, permutation, axis=-1)
+    return shuffled_imgs, shuffled_lbls
 
 def process_data(imgs, lbls):
     # select all ones and all zeros
@@ -107,9 +113,7 @@ def load_test_data(randomize=True):
     # return the processed data
     return test_images, test_labels
 
-def randomize_data(imgs, lbls):
-    assert imgs.shape[1] == lbls.shape[0]
-    permutation = np.random.permutation(imgs.shape[1])
-    shuffled_imgs = np.take(imgs, permutation, axis=-1)
-    shuffled_lbls = np.take(lbls, permutation, axis=-1)
-    return shuffled_imgs, shuffled_lbls
+def batch(imgs, lbls, size):
+    shuff_imgs, shuff_lbls = randomize_data(imgs, lbls)
+    perm = np.random.permutation(size)
+    return np.take(shuff_imgs, perm, axis=-1), np.take(shuff_lbls, perm, axis=-1)

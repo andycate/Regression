@@ -4,20 +4,19 @@ import data_aggregation as da
 import loss_function as lf
 import checking
 
-training_images, training_labels = da.load_training_data()
-theta = np.random.rand(785) / 10000
-learning_rate = 0.00003
-iterations = 200
-batch_size = 1000
+training_images, training_labels = da.load_training_data() # load the training images and labels
+theta = np.random.rand(785) / 10000 # initialize the parameters to very small random values
+learning_rate = 0.00003 # set the learning rate
+iterations = 200 # set the number of iterations
+batch_size = 1000 # set the batch size (-1 uses the entire training set size)
 
-testing_images, testing_labels = da.load_test_data()
-print(checking.percent_accuracy(theta, testing_images, testing_labels))
+test_images, test_labels = da.load_test_data() # load the test images and labels
+print(checking.percent_accuracy(theta, test_images, test_labels)) # print out the percent accuracy of the model before training
 
-for i in range(iterations):
-    batch_imgs, batch_lbls = da.batch(training_images, training_labels, batch_size)
-    print(lf.j_of_theta(theta, batch_imgs, batch_lbls))
-    gradient = lf.gradient_j_of_theta(theta, batch_imgs, batch_lbls).reshape(-1)
-    theta = theta - (gradient * learning_rate)
+for i in range(iterations): # train the model
+    batch_imgs, batch_lbls = da.batch(training_images, training_labels, batch_size) # get a new random batch
+    print(lf.j_of_theta(theta, batch_imgs, batch_lbls)) # print out the raw loss from the loss function
+    gradient = lf.gradient_j_of_theta(theta, batch_imgs, batch_lbls).reshape(-1) # calculate the gradient of the loss
+    theta = theta - (gradient * learning_rate) # apply the gradient to the model parameters
 
-testing_images, testing_labels = da.load_test_data()
-print(checking.percent_accuracy(theta, testing_images, testing_labels))
+print(checking.percent_accuracy(theta, test_images, test_labels)) # test the percent accuracy of the model after training

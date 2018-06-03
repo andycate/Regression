@@ -2,7 +2,8 @@ import numpy as np
 import math
 
 def h_of_x(params, x):
-    return 1 / (np.exp(-params.dot(x)) + 1)
+    dot_product = -params.dot(x)
+    return 1 / (np.exp(dot_product/np.max(-dot_product)) + 1)
 
 def j_of_theta(params, x, labels): # parameters should be of length 785(for this algorithm)
     y_hat = h_of_x(params, x)

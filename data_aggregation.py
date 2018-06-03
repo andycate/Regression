@@ -48,7 +48,7 @@ def process_data(imgs, lbls):
 
 def display_image(imgs, index):
     disp = ['.', ',', ';', 'x']
-    image = imgs[:784, index-1:index].reshape(784)
+    image = imgs[:784, index:index+1].reshape(784)
     for y in range(28):
         for x in range(28):
             symbol = disp[min(math.floor(image[y*28 + x]*(len(disp))), 3)]

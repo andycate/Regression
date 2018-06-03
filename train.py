@@ -15,8 +15,9 @@ print(checking.percent_accuracy(theta, test_images, test_labels)) # print out th
 
 for i in range(iterations): # train the model
     batch_imgs, batch_lbls = da.batch(training_images, training_labels, batch_size) # get a new random batch
-    print(lf.j_of_theta(theta, batch_imgs, batch_lbls)) # print out the raw loss from the loss function
+    # print(lf.j_of_theta(theta, batch_imgs, batch_lbls)) # print out the raw loss from the loss function
     gradient = lf.gradient_j_of_theta(theta, batch_imgs, batch_lbls).reshape(-1) # calculate the gradient of the loss
+    print(np.average(gradient - checking.gradient_checking(theta, batch_imgs, batch_lbls))) # print out the difference between the gradient and the approx gradient
     theta = theta - (gradient * learning_rate) # apply the gradient to the model parameters
 
 print(checking.percent_accuracy(theta, test_images, test_labels)) # test the percent accuracy of the model after training

@@ -61,7 +61,7 @@ def display_image(imgs, index):
             print(symbol+symbol, end="")
         print("", end="\n")
 
-def load_training_data():
+def load_training_data(randomize=True):
     # open the raw data files
     training_images_raw = open("data/train-images-idx3-ubyte", "rb")
     training_labels_raw = open("data/train-labels-idx1-ubyte", "rb")
@@ -77,10 +77,14 @@ def load_training_data():
     # process the data, and prepare it for training
     training_images, training_labels = process_data(training_images, training_labels)
 
+    #randomize
+    if randomize:
+        training_images, training_labels = randomize_data(training_images, training_labels)
+
     # return the processed data
     return training_images, training_labels
 
-def load_test_data():
+def load_test_data(randomize=True):
     # open the raw data files
     test_images_raw = open("data/t10k-images-idx3-ubyte", "rb")
     test_labels_raw = open("data/t10k-labels-idx1-ubyte", "rb")
@@ -96,5 +100,16 @@ def load_test_data():
     # process the data, and prepare it for training
     test_images, test_labels = process_data(test_images, test_labels)
 
+    #randomize
+    if randomize:
+        test_images, test_labels = randomize_data(test_images, test_labels)
+
     # return the processed data
     return test_images, test_labels
+
+def randomize_data(imgs, lbls):
+    assert imgs.shape[1] == lbls.shape[0]
+    permutation = np.random.permutation(imgs.shape[1])
+    shuffled_imgs = np.take(imgs, permutation, axis=-1)
+    shuffled_lbls = np.take(lbls, permutation, axis=-1)
+    return shuffled_imgs, shuffled_lbls

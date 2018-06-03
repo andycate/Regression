@@ -35,13 +35,19 @@ def format_labels(data_file):
     finally:
         return lbl_array
 
+def normalize_images(imgs):
+    mean = np.mean(imgs)
+    std = np.std(imgs)
+    return (imgs - mean) / std
+
+
 def process_data(imgs, lbls):
     # select all ones and all zeros
     index = np.sort(np.append(np.where(lbls==0)[0], np.where(lbls==1)[0]))
     labels = np.take(lbls, index)
     images = np.take(imgs, index, axis=-1)
-    # normalize data(devide by 255.0)
-    images = images / 255.0
+    # normalize data
+    images = normalize_images(images)
     # append ones to image data for intercept term
     images = np.append(images, np.ones((1, images.shape[1])), axis=0)
     return images, labels
